@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "MainFrm.h"
+#include "FramePacking3DFullscreen.h"
 #include <afxglobals.h>
 #include <..\src\mfc\afximpl.h>
 
@@ -324,8 +325,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND_RANGE(ID_ASPECTRATIO_START, ID_ASPECTRATIO_END, OnViewAspectRatio)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ASPECTRATIO_START, ID_ASPECTRATIO_END, OnUpdateViewAspectRatio)
 	ON_COMMAND(ID_ASPECTRATIO_NEXT, OnViewAspectRatioNext)
-	ON_COMMAND_RANGE(ID_STEREO3D_AUTO, ID_STEREO3D_OVERUNDER, OnViewStereo3DMode)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_STEREO3D_AUTO, ID_STEREO3D_OVERUNDER, OnUpdateViewStereo3DMode)
+	ON_COMMAND_RANGE(ID_STEREO3D_AUTO, ID_STEREO3D_FRAMEPACKING, OnViewStereo3DMode)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_STEREO3D_AUTO, ID_STEREO3D_FRAMEPACKING, OnUpdateViewStereo3DMode)
 	ON_UPDATE_COMMAND_UI(ID_STEREO3D_SWAP_LEFTRIGHT, OnUpdateViewSwapLeftRight)
 	ON_COMMAND(ID_STEREO3D_SWAP_LEFTRIGHT, OnViewSwapLeftRight)
 	ON_COMMAND_RANGE(ID_ONTOP_NEVER, ID_ONTOP_WHILEPLAYINGVIDEO, OnViewOntop)
@@ -415,7 +416,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_SUBTITLES_DEFSTYLE, OnUpdateSubtitlesDefStyle)
 	ON_COMMAND(ID_SUBTITLES_FORCEDONLY, OnMenuSubtitlesForcedOnly)
 	ON_UPDATE_COMMAND_UI(ID_SUBTITLES_FORCEDONLY, OnUpdateSubtitlesForcedOnly)
-	ON_COMMAND_RANGE(ID_SUBTITLES_STEREO_DONTUSE, ID_SUBTITLES_STEREO_TOPBOTTOM, OnStereoSubtitles)
+	ON_COMMAND_RANGE(ID_SUBTITLES_STEREO_DONTUSE, ID_SUBTITLES_STEREO_FRAMEPACKING, OnStereoSubtitles)
 
 	ON_COMMAND_RANGE(ID_FILTERSTREAMS_SUBITEM_START, ID_FILTERSTREAMS_SUBITEM_END, OnSelectStream)
 	ON_COMMAND_RANGE(ID_VOLUME_UP, ID_VOLUME_MUTE, OnPlayVolume)
@@ -4456,8 +4457,27 @@ void CMainFrame::OnFilePostOpenMedia(std::unique_ptr<OpenMediaData>& pOMD)
 		rs.Stereo3DSets.iTransform = STEREO3D_AsIs;
 	}
 	rs.Stereo3DSets.bSwapLR = s.bStereo3DSwapLR;
+	// Keep subtitle layout aligned with Frame Packing video.
+	if (s.iStereo3DMode == STEREO3D_FRAMEPACKING) {
+		rs.Stereo3DSets.iMode = SUBPIC_STEREO_FRAMEPACKING;
+	}
 	if (m_pCAP) {
-		m_pCAP->SetStereo3DSettings(&rs.Stereo3DSets);
+		if (s.iStereo3DMode == STEREO3D_FRAMEPACKING && !bMvcActive) {
+			// Frame Packing is selected but the current video is plain 2D
+			// (no MVC stream). Render mono subtitles for this session while
+			// keeping the Frame Packing preference, which is restored
+			// automatically for the next MVC video.
+			Stereo3DSettings tmpSets = rs.Stereo3DSets;
+			tmpSets.iMode = SUBPIC_STEREO_NONE;
+			m_pCAP->SetStereo3DSettings(&tmpSets);
+		} else {
+			m_pCAP->SetStereo3DSettings(&rs.Stereo3DSets);
+		}
+	}
+
+	if (m_bFullScreen && bMvcActive && s.iStereo3DMode == STEREO3D_FRAMEPACKING
+			&& !m_savedDispModeFP.bValid) {
+		AutoChangeMonitorMode();
 	}
 
 	if (OpenDeviceData *pDeviceData = dynamic_cast<OpenDeviceData*>(m_lastOMD.get())) {
@@ -7906,7 +7926,7 @@ void CMainFrame::OnViewRotate(UINT nID)
 			}
 
 			CString info;
-			info.Format(L"Rotation: %d°", rotation);
+			info.Format(L"Rotation: %dï¿½", rotation);
 			SendStatusMessage(info, 3000);
 		}
 	}
@@ -7981,7 +8001,7 @@ void CMainFrame::OnViewStereo3DMode(UINT nID)
 	CRenderersSettings& rs = s.m_VRSettings;
 
 	s.iStereo3DMode = nID - ID_STEREO3D_AUTO;
-	ASSERT(s.iStereo3DMode >= STEREO3D_AUTO && s.iStereo3DMode <= STEREO3D_OVERUNDER);
+	ASSERT(s.iStereo3DMode >= STEREO3D_AUTO && s.iStereo3DMode <= STEREO3D_FRAMEPACKING);
 
 	BOOL bMvcActive = FALSE;
 	if (CComQIPtr<IExFilterConfig> pEFC = FindFilter(__uuidof(CMPCVideoDecFilter), m_pGB)) {
@@ -7992,6 +8012,7 @@ void CMainFrame::OnViewStereo3DMode(UINT nID)
 		case STEREO3D_ROWINTERLEAVED_2X: iMvcOutputMode = MVC_OUTPUT_TopBottom;     break;
 		case STEREO3D_HALFOVERUNDER:     iMvcOutputMode = MVC_OUTPUT_HalfTopBottom; break;
 		case STEREO3D_OVERUNDER:         iMvcOutputMode = MVC_OUTPUT_TopBottom;     break;
+		case STEREO3D_FRAMEPACKING:      iMvcOutputMode = MVC_OUTPUT_FramePacking;  break;
 		}
 		const int mvc_mode_value = (iMvcOutputMode << 16) | (s.bStereo3DSwapLR ? 1 : 0);
 
@@ -8006,8 +8027,21 @@ void CMainFrame::OnViewStereo3DMode(UINT nID)
 		rs.Stereo3DSets.iTransform = STEREO3D_AsIs;
 	}
 	rs.Stereo3DSets.bSwapLR = s.bStereo3DSwapLR;
+	// Match subtitle layout to Frame Packing video.
+	if (s.iStereo3DMode == STEREO3D_FRAMEPACKING) {
+		rs.Stereo3DSets.iMode = SUBPIC_STEREO_FRAMEPACKING;
+	}
 	if (m_pCAP) {
-		m_pCAP->SetStereo3DSettings(&rs.Stereo3DSets);
+		if (s.iStereo3DMode == STEREO3D_FRAMEPACKING && !bMvcActive) {
+			// Frame Packing selected for plain 2D video: render mono
+			// subtitles while keeping the Frame Packing preference for the
+			// next MVC video.
+			Stereo3DSettings tmpSets = rs.Stereo3DSets;
+			tmpSets.iMode = SUBPIC_STEREO_NONE;
+			m_pCAP->SetStereo3DSettings(&tmpSets);
+		} else {
+			m_pCAP->SetStereo3DSettings(&rs.Stereo3DSets);
+		}
 	}
 
 	RepaintVideo();
@@ -8035,6 +8069,7 @@ void CMainFrame::OnViewSwapLeftRight()
 			case STEREO3D_ROWINTERLEAVED_2X: iMvcOutputMode = MVC_OUTPUT_TopBottom;     break;
 			case STEREO3D_HALFOVERUNDER:     iMvcOutputMode = MVC_OUTPUT_HalfTopBottom; break;
 			case STEREO3D_OVERUNDER:         iMvcOutputMode = MVC_OUTPUT_TopBottom;     break;
+			case STEREO3D_FRAMEPACKING:      iMvcOutputMode = MVC_OUTPUT_FramePacking;  break;
 			}
 			const int mvc_mode_value = (iMvcOutputMode << 16) | (s.bStereo3DSwapLR ? 1 : 0);
 
@@ -9059,6 +9094,10 @@ void CMainFrame::OnStereoSubtitles(UINT nID)
 	case ID_SUBTITLES_STEREO_TOPBOTTOM:
 		rs.Stereo3DSets.iMode = SUBPIC_STEREO_TOPANDBOTTOM;
 		osd.AppendFormat(L": %s", ResStr(IDS_SUBTITLES_STEREO_TOPANDBOTTOM));
+		break;
+	case ID_SUBTITLES_STEREO_FRAMEPACKING:
+		rs.Stereo3DSets.iMode = SUBPIC_STEREO_FRAMEPACKING;
+		osd.AppendFormat(L": %s", ResStr(IDS_SUBTITLES_STEREO_FRAMEPACKING));
 		break;
 	}
 
@@ -10940,7 +10979,8 @@ void CMainFrame::ToggleFullscreen(bool fToNearest, bool fSwitchScreenResWhenHasT
 		if (!m_bFirstFSAfterLaunchOnFullScreen) {
 			GetWindowRect(&m_lastWindowRect);
 		}
-		if (s.fullScreenModes.bEnabled == 1 && fSwitchScreenResWhenHasTo && (GetPlaybackMode() != PM_NONE)) {
+		if ((s.fullScreenModes.bEnabled == 1 || s.iStereo3DMode == STEREO3D_FRAMEPACKING)
+				&& fSwitchScreenResWhenHasTo && (GetPlaybackMode() != PM_NONE)) {
 			AutoChangeMonitorMode();
 		}
 		m_LastWindow_HM = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST);
@@ -10975,7 +11015,18 @@ void CMainFrame::ToggleFullscreen(bool fToNearest, bool fSwitchScreenResWhenHasT
 
 		SetMenuBarVisibility(AFX_MBV_DISPLAYONFOCUS | AFX_MBV_DISPLAYONF10);
 	} else {
-		if (s.fullScreenModes.bEnabled == 1 && s.fullScreenModes.bApplyDefault) {
+		// Restore the resolution we replaced for Frame Packing on entry.
+		// Done before the regular fullScreenModes default-mode path.
+		if (m_savedDispModeFP.bValid) {
+			const int savedBEn = s.fullScreenModes.bEnabled;
+			if (savedBEn != 1) {
+				s.fullScreenModes.bEnabled = 1;
+			}
+			SetDispMode(m_savedDispModeFP.dm, m_savedDispModeFP.displayName, CanSwitchD3DFS());
+			s.fullScreenModes.bEnabled = savedBEn;
+			m_savedDispModeFP.bValid = false;
+		}
+		else if (s.fullScreenModes.bEnabled == 1 && s.fullScreenModes.bApplyDefault) {
 			CString strFullScreenMonitor = s.strFullScreenMonitor;
 			CString strFullScreenMonitorID = s.strFullScreenMonitorID;
 			if (strFullScreenMonitor == L"Current") {
@@ -11156,7 +11207,18 @@ void CMainFrame::ToggleD3DFullscreen(bool fSwitchScreenResWhenHasTo)
 				m_pVW->put_Owner((OAHWND)m_pVideoWnd->m_hWnd);
 			}
 
-			if (s.fullScreenModes.bEnabled == 1 && s.fullScreenModes.bApplyDefault) {
+			// Restore the resolution we replaced for Frame Packing on entry.
+			// Skip the regular fullScreenModes default-mode path below.
+			if (m_savedDispModeFP.bValid) {
+				const int savedBEn = s.fullScreenModes.bEnabled;
+				if (savedBEn != 1) {
+					s.fullScreenModes.bEnabled = 1;
+				}
+				SetDispMode(m_savedDispModeFP.dm, m_savedDispModeFP.displayName, CanSwitchD3DFS());
+				s.fullScreenModes.bEnabled = savedBEn;
+				m_savedDispModeFP.bValid = false;
+			}
+			else if (s.fullScreenModes.bEnabled == 1 && s.fullScreenModes.bApplyDefault) {
 				CString strFullScreenMonitor = s.strFullScreenMonitor;
 				CString strFullScreenMonitorID = s.strFullScreenMonitorID;
 				if (strFullScreenMonitor == L"Current") {
@@ -11189,7 +11251,8 @@ void CMainFrame::ToggleD3DFullscreen(bool fSwitchScreenResWhenHasTo)
 			StartAutoHideCursor();
 		} else {
 			// Set the fullscreen display mode
-			if (s.fullScreenModes.bEnabled == 1 && fSwitchScreenResWhenHasTo) {
+			if ((s.fullScreenModes.bEnabled == 1 || s.iStereo3DMode == STEREO3D_FRAMEPACKING)
+					&& fSwitchScreenResWhenHasTo) {
 				AutoChangeMonitorMode();
 			}
 
@@ -11224,7 +11287,8 @@ void CMainFrame::ToggleD3DFullscreen(bool fSwitchScreenResWhenHasTo)
 
 void CMainFrame::AutoChangeMonitorMode()
 {
-	const CAppSettings& s = AfxGetAppSettings();
+	CAppSettings& s = AfxGetAppSettings();
+
 	CString strFullScreenMonitor = s.strFullScreenMonitor;
 	CString strFullScreenMonitorID = s.strFullScreenMonitorID;
 	BOOL bMonValid = FALSE;
@@ -11254,8 +11318,44 @@ void CMainFrame::AutoChangeMonitorMode()
 		}
 	}
 
+	if (!bMonValid) {
+		return;
+	}
+
+	BOOL bMvcActive = FALSE;
+	if (CComQIPtr<IExFilterConfig> pEFC = FindFilter(__uuidof(CMPCVideoDecFilter), m_pGB)) {
+		pEFC->Flt_GetInt("decode_mode_mvc", &bMvcActive);
+	}
+	if (s.iStereo3DMode == STEREO3D_FRAMEPACKING && bMvcActive) {
+		dispmode fpDm;
+		CStringW fpDisplay;
+		if (!FramePacking3DFullscreen::FindFpDispMode(strFullScreenMonitor, s.iStereo3DFPRefreshHz, fpDm, fpDisplay)) {
+			AfxMessageBox(ResStr(IDS_STEREO3D_FRAMEPACKING_NOTCONFIGURED),
+				MB_ICONWARNING | MB_OK);
+			return;
+		}
+		s.iStereo3DFPRefreshHz = fpDm.freq;
+
+		dispmode prev;
+		if (GetCurDispMode(prev, strFullScreenMonitor) && prev.bValid) {
+			m_savedDispModeFP.bValid      = true;
+			m_savedDispModeFP.displayName = strFullScreenMonitor;
+			m_savedDispModeFP.dm          = prev;
+		}
+
+		// SetDispMode() bails out when fullScreenModes.bEnabled != 1;
+		// force-enable for the call only.
+		const int savedBEn = s.fullScreenModes.bEnabled;
+		if (savedBEn != 1) {
+			s.fullScreenModes.bEnabled = 1;
+		}
+		SetDispMode(fpDm, strFullScreenMonitor, CanSwitchD3DFS());
+		s.fullScreenModes.bEnabled = savedBEn;
+		return;
+	}
+
 	// Set Display Mode
-	if (s.fullScreenModes.bEnabled && bMonValid == TRUE) {
+	if (s.fullScreenModes.bEnabled) {
 		double dFPS = 0.0;
 		if (m_dMediaInfoFPS > 0.9) {
 			dFPS = m_dMediaInfoFPS;
@@ -15267,6 +15367,7 @@ void CMainFrame::SetupSubtitlesSubMenu()
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_NONE), ID_SUBTITLES_STEREO_DONTUSE, ResStr(IDS_SUBTITLES_STEREO_DONTUSE));
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_SIDEBYSIDE), ID_SUBTITLES_STEREO_SIDEBYSIDE, ResStr(IDS_SUBTITLES_STEREO_SIDEBYSIDE));
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_TOPANDBOTTOM), ID_SUBTITLES_STEREO_TOPBOTTOM, ResStr(IDS_SUBTITLES_STEREO_TOPANDBOTTOM));
+	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_FRAMEPACKING), ID_SUBTITLES_STEREO_FRAMEPACKING, ResStr(IDS_SUBTITLES_STEREO_FRAMEPACKING));
 	submenu.AppendMenuW(MF_STRING | MF_POPUP | MF_ENABLED, (UINT_PTR)submenu3.Detach(), ResStr(IDS_SUBTITLES_STEREO));
 }
 
@@ -15300,6 +15401,7 @@ void CMainFrame::SetupSubtitlesRButtonMenu()
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_NONE), ID_SUBTITLES_STEREO_DONTUSE, ResStr(IDS_SUBTITLES_STEREO_DONTUSE));
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_SIDEBYSIDE), ID_SUBTITLES_STEREO_SIDEBYSIDE, ResStr(IDS_SUBTITLES_STEREO_SIDEBYSIDE));
 	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_TOPANDBOTTOM), ID_SUBTITLES_STEREO_TOPBOTTOM, ResStr(IDS_SUBTITLES_STEREO_TOPANDBOTTOM));
+	submenu3.AppendMenuW(SetFlags(SUBPIC_STEREO_FRAMEPACKING), ID_SUBTITLES_STEREO_FRAMEPACKING, ResStr(IDS_SUBTITLES_STEREO_FRAMEPACKING));
 	submenu.AppendMenuW(MF_STRING | MF_POPUP | MF_ENABLED, (UINT_PTR)submenu3.Detach(), ResStr(IDS_SUBTITLES_STEREO));
 }
 

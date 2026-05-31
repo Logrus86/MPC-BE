@@ -480,6 +480,14 @@ private:
 	CString m_LastOpenBDPath, m_BDLabel;
 	HMONITOR m_LastWindow_HM;
 
+	// Previous dispmode saved on entering fullscreen with Stereo3D Frame
+	// Packing, so we can restore it on exit via SetDispMode().
+	struct {
+		bool      bValid = false;
+		CString   displayName;
+		dispmode  dm;
+	} m_savedDispModeFP;
+
 	double m_PlaybackRate;
 
 	double m_ZoomX, m_ZoomY, m_PosX, m_PosY;

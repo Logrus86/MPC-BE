@@ -1719,6 +1719,7 @@ BEGIN
             MENUITEM "로우 인터리버(2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "하프 오버언더",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "오버언더",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "좌우 반전",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1899,6 +1900,7 @@ BEGIN
             MENUITEM "로우 인터리브(2배)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "하프 오버언더",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "오버언더",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "좌우 반전",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1988,6 +1990,7 @@ BEGIN
                 MENUITEM "로우 인터리브(2배)",        ID_STEREO3D_ROW_INTERLEAVED_2X
                 MENUITEM "하프 오버언더",              ID_STEREO3D_HALFOVERUNDER
                 MENUITEM "오버언더",                   ID_STEREO3D_OVERUNDER
+                MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
                 MENUITEM SEPARATOR
                 MENUITEM "좌우 반전",             ID_STEREO3D_SWAP_LEFTRIGHT
             END
@@ -2066,6 +2069,7 @@ BEGIN
             MENUITEM "로우 인터리브(2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "하프 오버언더",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "오버언더",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "좌우 반전",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -3901,6 +3905,7 @@ BEGIN
     IDS_SUBTITLES_STEREO_DONTUSE "사용 안 함"
     IDS_SUBTITLES_STEREO_SIDEBYSIDE "나란히"
     IDS_SUBTITLES_STEREO_TOPANDBOTTOM "상하단"
+    IDS_STEREO3D_FRAMEPACKING_NOTCONFIGURED "Frame Packing 3D 모드가 구성되지 않았습니다"
     IDS_SUB_POS_UP          "자막 위치 위로 이동"
     IDS_SUB_POS_DOWN        "자막 위치 아래로 이동"
     IDS_SUB_POS_LEFT        "자막 위치 왼쪽으로 이동"

@@ -744,6 +744,7 @@ void CAppSettings::ResetSettings()
 
 	iStereo3DMode = STEREO3D_AUTO;
 	bStereo3DSwapLR = false;
+	iStereo3DFPRefreshHz = 0;
 
 	ShaderList.clear();
 	ShaderListScreenSpace.clear();
@@ -1383,8 +1384,9 @@ void CAppSettings::LoadSettings(bool bForce/* = false*/)
 
 	profile.ReadBool(IDS_R_SETTINGS, IDS_RS_SUBSAVEEXTERNALSTYLEFILE, bSubSaveExternalStyleFile);
 
-	profile.ReadInt(IDS_R_SETTINGS, IDS_RS_STEREO3D_MODE, iStereo3DMode, STEREO3D_AUTO, STEREO3D_OVERUNDER);
+	profile.ReadInt(IDS_R_SETTINGS, IDS_RS_STEREO3D_MODE, iStereo3DMode, STEREO3D_AUTO, STEREO3D_FRAMEPACKING);
 	profile.ReadBool(IDS_R_SETTINGS, IDS_RS_STEREO3D_SWAPLEFTRIGHT, bStereo3DSwapLR);
+	profile.ReadInt(IDS_R_SETTINGS, IDS_RS_STEREO3D_FP_REFRESH_HZ, iStereo3DFPRefreshHz);
 
 	{ // load shader list
 		int curPos;
@@ -1749,6 +1751,7 @@ void CAppSettings::SaveSettings()
 
 	profile.WriteInt(IDS_R_SETTINGS, IDS_RS_STEREO3D_MODE, iStereo3DMode);
 	profile.WriteBool(IDS_R_SETTINGS, IDS_RS_STEREO3D_SWAPLEFTRIGHT, bStereo3DSwapLR);
+	profile.WriteInt(IDS_R_SETTINGS, IDS_RS_STEREO3D_FP_REFRESH_HZ, iStereo3DFPRefreshHz);
 
 	{ // save shader list
 		str.Empty();

@@ -207,6 +207,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FramePacking3DFullscreen.cpp" />
     <ClCompile Include="SvgHelper.cpp" />
     <ClCompile Include="ThumbsTaskDlg.cpp" />
     <ClCompile Include="TorrentInfo.cpp" />
@@ -346,6 +347,7 @@
     <ClInclude Include="ShaderNewDlg.h" />
     <ClInclude Include="ShockwaveGraph.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="FramePacking3DFullscreen.h" />
     <ClInclude Include="SvgHelper.h" />
     <ClInclude Include="ThumbsTaskDlg.h" />
     <ClInclude Include="TorrentInfo.h" />

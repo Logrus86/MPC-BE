@@ -123,7 +123,7 @@
 #define IDS_RS_WEBSERVERCGI					L"CGIHandlers"
 #define IDS_RS_WEBDEFINDEX					L"DefaultPage"
 
-// ÎnlineServices
+// ï¿½nlineServices
 #define IDS_R_ONLINESERVICES				L"OnlineServices"
 #define IDS_R_YOUTUBECACHE					L"OnlineServices\\YoutubeCache"
 #define IDS_RS_YOUTUBE_LOAD_PLAYLIST		L"YoutubeLoadPlaylist"
@@ -235,6 +235,7 @@
 
 #define IDS_RS_STEREO3D_MODE				L"Stereo3DMode"
 #define IDS_RS_STEREO3D_SWAPLEFTRIGHT		L"Stereo3DSwapLeftRight"
+#define IDS_RS_STEREO3D_FP_REFRESH_HZ		L"Stereo3DFramePackingRefreshHz"
 #define IDS_RS_SHADERLIST					L"ShaderList"
 #define IDS_RS_SHADERLISTSCREENSPACE		L"ShaderListScreenSpace"
 #define IDS_RS_SHADERS11POSTSCALE			L"Shaders11PostScale"

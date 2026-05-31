@@ -1719,6 +1719,7 @@ BEGIN
             MENUITEM "行交互 (2 倍)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "上下分割 (縦圧縮)",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "上下分割",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "左右入れ替え",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1899,6 +1900,7 @@ BEGIN
             MENUITEM "行交互 (2 倍)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "上下分割 (縦圧縮)",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "上下分割",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "左右入れ替え",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1988,6 +1990,7 @@ BEGIN
                 MENUITEM "行交互 (2 倍)",        ID_STEREO3D_ROW_INTERLEAVED_2X
                 MENUITEM "上下分割 (縦圧縮)",              ID_STEREO3D_HALFOVERUNDER
                 MENUITEM "上下分割",                   ID_STEREO3D_OVERUNDER
+                MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
                 MENUITEM SEPARATOR
                 MENUITEM "左右入れ替え",             ID_STEREO3D_SWAP_LEFTRIGHT
             END
@@ -2066,6 +2069,7 @@ BEGIN
             MENUITEM "行交互 (2 倍)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "上下分割 (縦圧縮)",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "上下分割",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "左右入れ替え",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -3901,6 +3905,7 @@ BEGIN
     IDS_SUBTITLES_STEREO_DONTUSE "使用しない"
     IDS_SUBTITLES_STEREO_SIDEBYSIDE "左右に並べて表示"
     IDS_SUBTITLES_STEREO_TOPANDBOTTOM "上下に並べて表示"
+    IDS_STEREO3D_FRAMEPACKING_NOTCONFIGURED "Frame Packing 3Dモードが設定されていません"
     IDS_SUB_POS_UP          "字幕の位置を上に移動"
     IDS_SUB_POS_DOWN        "字幕の位置を下に移動"
     IDS_SUB_POS_LEFT        "字幕の位置を左に移動"

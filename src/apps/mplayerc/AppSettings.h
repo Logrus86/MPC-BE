@@ -137,6 +137,7 @@ enum : int {
 	STEREO3D_ROWINTERLEAVED_2X,
 	STEREO3D_HALFOVERUNDER,
 	STEREO3D_OVERUNDER,
+	STEREO3D_FRAMEPACKING,
 };
 
 // Enumeration for MCE remote control (careful : add 0x010000 for all keys!)
@@ -627,6 +628,10 @@ public:
 	dispmode		dmFSMonOnLaunch;
 	CString			strFSMonOnLaunch;
 	int				iDMChangeDelay;
+
+	// Cached refresh rate (Hz) of a discovered 1920x2205 Frame Packing mode.
+	// 0 = not yet found; positive = found, skip re-probing.
+	int				iStereo3DFPRefreshHz = 0;
 
 	CString strTabs;
 

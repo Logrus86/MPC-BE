@@ -1719,6 +1719,7 @@ BEGIN
             MENUITEM "Red Isprepleten (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Pola PrekoIspod",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "PrekoIspod",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Zamjena Lijevo/Desno",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1899,6 +1900,7 @@ BEGIN
             MENUITEM "Red Isprepleten (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Pola PrekoIspod",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "PrekoIspod",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Zamjena Lijevo/Desno",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1988,6 +1990,7 @@ BEGIN
                 MENUITEM "Red Isprepleten (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
                 MENUITEM "Pola PrekoIspod",              ID_STEREO3D_HALFOVERUNDER
                 MENUITEM "PrekoIspod",                   ID_STEREO3D_OVERUNDER
+                MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
                 MENUITEM SEPARATOR
                 MENUITEM "Zamjena Lijevo/Desno",             ID_STEREO3D_SWAP_LEFTRIGHT
             END
@@ -2066,6 +2069,7 @@ BEGIN
             MENUITEM "Red Isprepleten (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Pola PrekoIspod",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "PrekoIspod",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Zamjena Lijevo/Desno",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -3901,6 +3905,7 @@ BEGIN
     IDS_SUBTITLES_STEREO_DONTUSE "Ne koristi"
     IDS_SUBTITLES_STEREO_SIDEBYSIDE "Usporedo"
     IDS_SUBTITLES_STEREO_TOPANDBOTTOM "Vrh i Dno"
+    IDS_STEREO3D_FRAMEPACKING_NOTCONFIGURED "Frame Packing 3D način nije konfiguriran"
     IDS_SUB_POS_UP          "Pomakni smještaj podnaslova prema gore"
     IDS_SUB_POS_DOWN        "Pomakni smještaj podnaslova prema dolje"
     IDS_SUB_POS_LEFT        "Pomakni smještaj podnaslova prema lijevo"

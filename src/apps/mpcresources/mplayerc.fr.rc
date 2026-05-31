@@ -1721,6 +1721,7 @@ BEGIN
             MENUITEM "Ligne entrelacée (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Half OverUnder",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "OverUnder",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Intervertir Gauche/Droite",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1901,6 +1902,7 @@ BEGIN
             MENUITEM "Ligne entrelacée (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Half OverUnder",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "OverUnder",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Intervertir Gauche/Droite",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -1990,6 +1992,7 @@ BEGIN
                 MENUITEM "Ligne entrelacée (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
                 MENUITEM "Half OverUnder",              ID_STEREO3D_HALFOVERUNDER
                 MENUITEM "OverUnder",                   ID_STEREO3D_OVERUNDER
+                MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
                 MENUITEM SEPARATOR
                 MENUITEM "Intervertir Gauche/Droite",             ID_STEREO3D_SWAP_LEFTRIGHT
             END
@@ -2068,6 +2071,7 @@ BEGIN
             MENUITEM "Ligne entrelacée (2x)",        ID_STEREO3D_ROW_INTERLEAVED_2X
             MENUITEM "Half OverUnder",              ID_STEREO3D_HALFOVERUNDER
             MENUITEM "OverUnder",                   ID_STEREO3D_OVERUNDER
+            MENUITEM "Frame Packing",               ID_STEREO3D_FRAMEPACKING
             MENUITEM SEPARATOR
             MENUITEM "Intervertir Gauche/Droite",             ID_STEREO3D_SWAP_LEFTRIGHT
         END
@@ -3903,6 +3907,7 @@ BEGIN
     IDS_SUBTITLES_STEREO_DONTUSE "Ne pas utiliser"
     IDS_SUBTITLES_STEREO_SIDEBYSIDE "Côte à côte"
     IDS_SUBTITLES_STEREO_TOPANDBOTTOM "Haut et bas"
+    IDS_STEREO3D_FRAMEPACKING_NOTCONFIGURED "Le mode 3D Frame Packing n'est pas configuré"
     IDS_SUB_POS_UP          "Déplacement des sous-titres vers le haut"
     IDS_SUB_POS_DOWN        "Déplacement des sous-titres vers le bas"
     IDS_SUB_POS_LEFT        "Déplacement des sous-titres vers la gauche"
